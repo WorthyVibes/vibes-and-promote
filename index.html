@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#101b35">
+<meta name="description" content="Vibes & Promote connects events, music, artists and business promotion.">
+<link rel="manifest" href="manifest.webmanifest">
+<title>Vibes & Promote</title>
+<style>
+:root{--navy:#101b35;--gold:#d6ad52;--paper:#f5f6fa;--ink:#182238}
+*{box-sizing:border-box}body{margin:0;font:16px system-ui,Arial;background:var(--paper);color:var(--ink)}
+header{background:var(--navy);color:white;padding:25px 18px;text-align:center;border-bottom:4px solid var(--gold)}
+header h1{margin:0;color:var(--gold);font-size:30px}header p{margin:8px 0 0}
+main{max-width:760px;margin:auto;padding:16px}.card{background:white;border-radius:14px;padding:18px;margin:14px 0;box-shadow:0 2px 10px #101b3512}
+h2{margin-top:0;color:var(--navy)}label{display:block;font-weight:600;margin:12px 0 5px}
+input,textarea,select{width:100%;padding:12px;border:1px solid #cbd0dc;border-radius:9px;font:inherit}
+button,.btn{display:inline-block;background:var(--navy);color:white;border:0;border-radius:9px;padding:12px 16px;font:inherit;text-decoration:none;margin-top:10px;cursor:pointer}
+.gold{background:var(--gold);color:#161616}.muted{color:#667085;font-size:13px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+footer{text-align:center;padding:24px;color:#667085}
+</style>
+</head>
+<body>
+<header><h1>Vibes &amp; Promote</h1><p>EVENTS • MUSIC • ARTISTS • BUSINESS PROMOTION</p><p class="muted" style="color:#e5e7eb">Powered by Vibes by Steve</p></header>
+<main>
+<section class="card"><h2>Connect, create and promote</h2><p>Find event support, connect with artists and service providers, and promote your business.</p></section>
+<div class="grid">
+<section class="card"><h2>Event enquiry</h2><form id="booking"><label>Your name</label><input name="name" required><label>Phone number</label><input name="phone" required><label>Event type</label><input name="type" placeholder="Wedding, introduction, party..."><label>Event date</label><input name="date" type="date"><label>Location</label><input name="location"><label>What do you need?</label><textarea name="details" rows="3"></textarea><button class="send">Send enquiry on WhatsApp</button></form></section>
+<section class="card"><h2>Join as a provider or artist</h2><form id="provider"><label>Your name / stage name</label><input name="name" required><label>Phone number</label><input name="phone" required><label>Category</label><select name="category"><option>Artist / Musician</option><option>DJ</option><option>Event planner</option><option>Decorator</option><option>Equipment hire</option><option>Photographer / Videographer</option><option>Other service provider</option></select><label>Experience and previous work</label><textarea name="work" rows="3"></textarea><button class="send">Apply on WhatsApp</button></form></section>
+</div>
+<section class="card"><h2>Event budget calculator</h2><label>Venue (UGX)</label><input id="venue" type="number" min="0" value="0"><label>Food and drinks (UGX)</label><input id="food" type="number" min="0" value="0"><label>Music and entertainment (UGX)</label><input id="music" type="number" min="0" value="0"><label>Decoration (UGX)</label><input id="decor" type="number" min="0" value="0"><label>Other costs (UGX)</label><input id="other" type="number" min="0" value="0"><button id="calculate">Calculate estimate</button><h3 id="total">Estimated total: UGX 0</h3></section>
+<section class="card"><h2>Promote your business</h2><p>Need help promoting a business, event, music release or creative project? Send an enquiry and tell us what you want to promote.</p><label>What would you like to promote?</label><textarea id="promotion" rows="3" placeholder="Describe your business, event or music project"></textarea><button id="promote">Request promotion</button></section>
+<section class="card"><h2>Digital guides</h2><p>Ask about available Vibes by Steve digital guides and products.</p><button id="products" class="gold">Enquire about digital products</button></section>
+<section class="card"><h2>Settings</h2><p class="muted">Enter your WhatsApp number in international format, without + or spaces. Example: 2567XXXXXXXX.</p><label>Business WhatsApp number</label><input id="wa" placeholder="2567XXXXXXXX"><button id="save">Save number on this phone</button><p id="saved" class="muted"></p></section>
+</main><footer>Vibes &amp; Promote · Powered by Vibes by Steve</footer>
+<script>
+const waInput=document.getElementById('wa');waInput.value=localStorage.getItem('vibes_wa')||'';
+document.getElementById('save').onclick=()=>{localStorage.setItem('vibes_wa',waInput.value.trim());document.getElementById('saved').textContent='Number saved on this device.'};
+function send(text){const n=(localStorage.getItem('vibes_wa')||'').replace(/\D/g,'');if(!n){alert('Please save your business WhatsApp number in Settings first.');return}location.href='https://wa.me/'+n+'?text='+encodeURIComponent(text)}
+document.getElementById('booking').onsubmit=e=>{e.preventDefault();const d=Object.fromEntries(new FormData(e.target));send('EVENT ENQUIRY\\n'+Object.entries(d).map(([k,v])=>k+': '+v).join('\\n'))};
+document.getElementById('provider').onsubmit=e=>{e.preventDefault();const d=Object.fromEntries(new FormData(e.target));send('PROVIDER / ARTIST APPLICATION\\n'+Object.entries(d).map(([k,v])=>k+': '+v).join('\\n'))};
+document.querySelectorAll('.send').forEach(b=>b.type='submit');
+document.getElementById('calculate').onclick=()=>{let s=['venue','food','music','decor','other'].reduce((a,id)=>a+(Number(document.getElementById(id).value)||0),0);document.getElementById('total').textContent='Estimated total: UGX '+s.toLocaleString('en-US')};
+document.getElementById('promote').onclick=()=>send('BUSINESS / EVENT PROMOTION ENQUIRY\\n'+document.getElementById('promotion').value);
+document.getElementById('products').onclick=()=>send('Hello, I would like to know about your digital guides and products.');
+if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+</script></body></html>
